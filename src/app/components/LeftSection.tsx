@@ -1,20 +1,25 @@
 'use client'
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import {descriptions} from '../constant/authentication';
 
-type StepType = 'mobile' | 'verification' | 'password' | 'login';
 
+interface LeftSectionProps {}
 
-interface LeftSectionProps {
-  step: StepType;
-}
+const LeftSection: React.FC<LeftSectionProps> = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-// LeftSection component
-const LeftSection = ({ step }:LeftSectionProps) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % descriptions.length);
+    }, 10000); 
+
+    return () => clearInterval(interval); 
+  }, []);
+
   return (
     <div className="relative hidden lg:block lg:w-1/2 h-screen">
-        
       <Image
         src="/images/background.jpg"
         alt="men and women in gym"
@@ -24,19 +29,24 @@ const LeftSection = ({ step }:LeftSectionProps) => {
       />
       <div className="absolute inset-0 bg-black opacity-40"></div>
 
-      {/* Heading and descriptions */}
+      {/* Heading and description */}
       <div className="absolute top-10 left-6 right-6 flex flex-col space-y-10 w-4/5 max-w-2xl">
-        <h1 className="text-white font-bold text-4xl">AlphaFlex</h1>
+        <div className=" relative w-10 h-10">
+          <Image
+            src="/images/logo.png"
+            alt="men and women in gym"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+        <h4 className="text-white font-bold text-4xl">{descriptions[currentIndex].title}</h4>
         <p className="text-white text-lg leading-tight">
-          {step === 'mobile' || step === 'login'
-            ? "Access your personalized AlphaFlex fitness experience by logging into your account, where you can explore high-quality equipment, energetic workout environments, and tailored support designed to help you achieve your health and wellness goals."
-            : step === 'verification'
-            ? "Enter the verification code sent to your mobile number to proceed with resetting your password and regain access to your AlphaFlex account."
-            : "Set a new password to secure your AlphaFlex account and continue enjoying our premium workout spaces and personalized training plans."}
+          {descriptions[currentIndex].description}
         </p>
       </div>
 
-      <div className="absolute bottom-0 left-6 right-6 text-white text-lg leading-tight p-4">
+      <div className="absolute bottom-0 left-6 right-6 text-white text-sm leading-tight p-4">
         <p>Jinad Gamage</p>
         <p>CEO @ AlphaFlex</p>
       </div>
@@ -44,4 +54,4 @@ const LeftSection = ({ step }:LeftSectionProps) => {
   );
 };
 
-export default LeftSection
+export default LeftSection;

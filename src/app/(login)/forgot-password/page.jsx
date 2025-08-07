@@ -1,8 +1,6 @@
 'use client'
 
 import React, { useState } from "react";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { FcGoogle } from "react-icons/fc";
 import LeftSection from '../../components/LeftSection';
 import MobileForm from '../../components/forget-password/MobileForm';
 import VerificationForm from '../../components/forget-password/VerificationForm';
