@@ -10,7 +10,7 @@ interface MobileFormProps {
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
 }
 
-const MobileForm: React.FC<MobileFormProps> = ({ mobileNumber, setMobileNumber, setStep }) => {
+const MobileForm: React.FC<MobileFormProps> = ({setStep }) => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,8 +24,6 @@ const MobileForm: React.FC<MobileFormProps> = ({ mobileNumber, setMobileNumber, 
         <label className="block text-sm">Mobile Number</label>
         <input
           type="text"
-          value={mobileNumber}
-          onChange={(e) => setMobileNumber(e.target.value)}
           className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
           required
         />
@@ -57,8 +55,8 @@ const MobileForm: React.FC<MobileFormProps> = ({ mobileNumber, setMobileNumber, 
               Login
             </button>
            </Link>
-          
         </p>
+        
       </div>
     </form>
   );

@@ -9,10 +9,6 @@ import UploadProfilePicture from '../../components/signup/UploadProfilePicture';
 
 const Page = () => {
   const [step, setStep] = useState('mobile');
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
-
-
 
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-screen">
@@ -35,21 +31,17 @@ const Page = () => {
           </div>
 
           {step === 'mobile' ? (
-            <MobileForm
-              mobileNumber={mobileNumber}
-              setMobileNumber={setMobileNumber}
-              setStep={setStep}
-            />
+            < MobileForm setStep={setStep} />
+
           ) : step === 'verification' ? (
-            <VerificationForm
-              verificationCode={verificationCode}
-              setVerificationCode={setVerificationCode}
-              setStep={setStep}
-            />
+            <VerificationForm setStep={setStep} />
+
           ) : step === 'details' ? (
             <PersonalDetailsForm setStep={setStep} />
+
           ) : step === 'profilePicture' ? (
             <UploadProfilePicture setStep={setStep} />
+            
           ) : (
             <LoginForm setStep={setStep} />
           )}

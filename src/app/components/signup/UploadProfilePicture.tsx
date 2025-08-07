@@ -1,6 +1,7 @@
 
 import React, { useState, useCallback, FormEvent } from "react";
-import Cropper, { Area } from "react-easy-crop"; // Updated import
+import Cropper, { Area } from "react-easy-crop";
+import Link from "next/link";
 
 type StepType = 'mobile' | 'verification' | 'details' | 'profilePicture' | 'login';
 
@@ -74,6 +75,7 @@ const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({ setStep }) 
     } else {
       alert("Please upload and crop an image before submitting.");
     }
+    
   };
 
   // Handle skip action
@@ -113,7 +115,7 @@ const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({ setStep }) 
           className="w-full border-2 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition"
           disabled={!imageSrc}
         >
-          Upload Profile Picture
+          Finish
         </button>
         <button
           type="button"
@@ -133,6 +135,17 @@ const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({ setStep }) 
           >
             Enter Personal Details
           </button>
+        </p>
+        <p className="text-sm">
+          Back to login?{" "}
+           <Link href="/signin">
+            <button
+              type="button"
+              className="text-blue-900 font-semibold"
+            >
+              Login
+            </button>
+           </Link>
         </p>
       </div>
     </form>

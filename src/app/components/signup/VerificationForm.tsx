@@ -1,4 +1,5 @@
 
+import Link from "next/link";
 import React, { useState, useRef, FormEvent, useEffect } from "react";
 
 type StepType = 'mobile' | 'verification' | 'details';
@@ -9,7 +10,7 @@ interface VerificationFormProps {
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
 }
 
-const VerificationForm: React.FC<VerificationFormProps> = ({ verificationCode, setVerificationCode, setStep }) => {
+const VerificationForm: React.FC<VerificationFormProps> = ({ setStep }) => {
   const [codeArray, setCodeArray] = useState<string[]>(Array(6).fill('')); // State for 6 input boxes
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]); // Refs for focusing inputs
 
@@ -19,7 +20,6 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ verificationCode, s
       const newCodeArray = [...codeArray];
       newCodeArray[index] = value;
       setCodeArray(newCodeArray);
-      setVerificationCode(newCodeArray.join(''));
 
       // Auto-focus next input
       if (value && index < 5) {
@@ -41,18 +41,10 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ verificationCode, s
     if (/^\d{6}$/.test(pastedData)) {
       const newCodeArray = pastedData.split('');
       setCodeArray(newCodeArray);
-      setVerificationCode(pastedData);
-      inputRefs.current[5]?.focus(); // Focus last input
+      inputRefs.current[5]?.focus();
     }
     e.preventDefault();
   };
-
-  // Sync codeArray with verificationCode prop
-  useEffect(() => {
-    if (verificationCode.length === 0) {
-      setCodeArray(Array(6).fill(''));
-    }
-  }, [verificationCode]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -100,7 +92,20 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ verificationCode, s
             Enter Mobile Number
           </button>
         </p>
+
+        <p className="text-sm">
+          Back to login?{" "}
+           <Link href="/signin">
+            <button
+              type="button"
+              className="text-blue-900 font-semibold"
+            >
+              Login
+            </button>
+           </Link>
+        </p>
       </div>
+      
     </form>
   );
 };

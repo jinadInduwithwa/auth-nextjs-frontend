@@ -1,5 +1,6 @@
 
 import React, { useState, FormEvent } from "react";
+import Link from "next/link";
 
 type StepType = 'mobile' | 'verification' | 'details' | 'profilePicture';
 
@@ -72,7 +73,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ setStep }) =>
           className="w-full border-2 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition"
            onClick={() => setStep('profilePicture')}
         >
-          Submit Details
+          Next Step
         </button>
       </div>
       <div className="text-center mt-4">
@@ -84,6 +85,17 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ setStep }) =>
           >
             Enter Verification Code
           </button>
+        </p>
+        <p className="text-sm">
+          Back to login?{" "}
+           <Link href="/signin">
+            <button
+              type="button"
+              className="text-blue-900 font-semibold"
+            >
+              Login
+            </button>
+           </Link>
         </p>
       </div>
     </form>
