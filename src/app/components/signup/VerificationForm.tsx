@@ -1,8 +1,11 @@
+"use client";
 
+import React, { FormEvent } from "react";
+import OtpInput from "react-otp-input";
+import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
-import React, { useState, useRef, FormEvent, useEffect } from "react";
 
-type StepType = 'mobile' | 'verification' | 'details';
+type StepType = "mobile" | "verification" | "details" | "profilePicture";
 
 interface VerificationFormProps {
   verificationCode: string;
@@ -10,103 +13,84 @@ interface VerificationFormProps {
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
 }
 
-const VerificationForm: React.FC<VerificationFormProps> = ({ setStep }) => {
-  const [codeArray, setCodeArray] = useState<string[]>(Array(6).fill('')); // State for 6 input boxes
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]); // Refs for focusing inputs
-
-  // Handle input change for individual boxes
-  const handleInputChange = (index: number, value: string) => {
-    if (/^[0-9]?$/.test(value)) { // Accept only single digit
-      const newCodeArray = [...codeArray];
-      newCodeArray[index] = value;
-      setCodeArray(newCodeArray);
-
-      // Auto-focus next input
-      if (value && index < 5) {
-        inputRefs.current[index + 1]?.focus();
-      }
+const VerificationForm: React.FC<VerificationFormProps> = ({
+  verificationCode,
+  setVerificationCode,
+  setStep,
+}) => {
+  const validateForm = () => {
+    const codeRegex = /^[0-9]{6}$/;
+    if (!verificationCode) {
+      toast.error("Verification code is required.");
+      return false;
     }
-  };
-
-  // Handle backspace to focus previous input
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !codeArray[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+    if (!codeRegex.test(verificationCode)) {
+      toast.error("Please enter a valid 6-digit verification code.");
+      return false;
     }
-  };
-
-  // Handle paste event
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    const pastedData = e.clipboardData.getData('text').trim();
-    if (/^\d{6}$/.test(pastedData)) {
-      const newCodeArray = pastedData.split('');
-      setCodeArray(newCodeArray);
-      inputRefs.current[5]?.focus();
-    }
-    e.preventDefault();
+    return true;
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Simulate verifying code (replace with actual API call)
-    setStep('details');
+    if (validateForm()) {
+      toast.success("Code verified successfully!");
+      setStep("details");
+    }
   };
 
   return (
-    <form className="space-y-4 mt-10" onSubmit={handleSubmit}>
-      <div className="space-y-1">
-        <label className="block text-sm">Enter the Verification Code</label>
-        <div className="flex justify-between">
-          {Array(6).fill(0).map((_, index) => (
-            <input
-              key={index}
-              type="text"
-              maxLength={1}
-              value={codeArray[index]}
-              onChange={(e) => handleInputChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              onPaste={index === 0 ? handlePaste : undefined} // Paste only on first input
-              className="w-12 h-12 text-center text-lg border-2 border-gray-300 rounded-md focus:outline-none focus:border-blue-500 transition"
-              required
-              aria-label={`Verification code digit ${index + 1}`}
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
+      <form className="space-y-4 mt-10" onSubmit={handleSubmit}>
+        <div className="space-y-1">
+          <label className="block text-sm">Enter the Verification Code</label>
+          <div className="flex justify-between">
+            <OtpInput
+              value={verificationCode}
+              onChange={setVerificationCode}
+              numInputs={6}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  type="text"
+                  inputMode="numeric"
+                  className="max-w-10 h-10 mx-5 text-center text-lg border-b-2 border-black bg-transparent focus:outline-none focus:border-blue-500 transition"
+                />
+              )}
             />
-          ))}
+          </div>
         </div>
-      </div>
-      <div className="space-y-4 mt-6">
-        <button
-          type="submit"
-          className="w-full border-2 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition"
-        >
-          Verify Code
-        </button>
-      </div>
-      <div className="text-center mt-4">
-        <p className="text-sm">
-          Back to mobile?{" "}
+        <div className="space-y-4 mt-6">
           <button
-            type="button"
-            className="text-blue-900 font-semibold"
-            onClick={() => setStep('mobile')}
+            type="submit"
+            className="w-full border-2 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition"
           >
-            Enter Mobile Number
+            Verify Code
           </button>
-        </p>
-
-        <p className="text-sm">
-          Back to login?{" "}
-           <Link href="/signin">
+        </div>
+        <div className="text-center mt-4">
+          <p className="text-sm">
+            Back to mobile?{" "}
             <button
               type="button"
               className="text-blue-900 font-semibold"
+              onClick={() => setStep("mobile")}
             >
-              Login
+              Enter Mobile Number
             </button>
-           </Link>
-        </p>
-      </div>
-      
-    </form>
+          </p>
+          <p className="text-sm">
+            Back to login?{" "}
+            <Link href="/signin">
+              <button type="button" className="text-blue-900 font-semibold">
+                Login
+              </button>
+            </Link>
+          </p>
+        </div>
+      </form>
+    </>
   );
 };
 

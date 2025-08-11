@@ -1,7 +1,10 @@
+"use client";
+
 import React, { FormEvent } from "react";
+import OtpInput from "react-otp-input";
+import toast, { Toaster } from "react-hot-toast";
 
-type StepType = 'mobile' | 'verification' | 'password' | 'login';
-
+type StepType = "mobile" | "verification" | "password" | "login";
 
 interface VerificationFormProps {
   verificationCode: string;
@@ -9,47 +12,77 @@ interface VerificationFormProps {
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
 }
 
-const VerificationForm: React.FC<VerificationFormProps> = ({ verificationCode, setVerificationCode, setStep }) => {
+const VerificationForm: React.FC<VerificationFormProps> = ({
+  verificationCode,
+  setVerificationCode,
+  setStep,
+}) => {
+  const validateForm = () => {
+    const codeRegex = /^[0-9]{6}$/; // must be 6 digits
+    if (!verificationCode) {
+      toast.error("Verification code is required.");
+      return false;
+    }
+    if (!codeRegex.test(verificationCode)) {
+      toast.error("Please enter a valid 6-digit verification code.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Simulate verifying code (replace with actual API call)
-    setStep('password');
+    if (validateForm()) {
+      toast.success("Code verified successfully!");
+      setStep("password");
+    }
   };
 
   return (
-    <form className="space-y-4 mt-10" onSubmit={handleSubmit}>
-      <div className="space-y-1">
-        <label className="block text-sm">Verification Code</label>
-        <input
-          type="text"
-          value={verificationCode}
-          onChange={(e) => setVerificationCode(e.target.value)}
-          className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
-          required
-        />
-      </div>
-      <div className="space-y-4 mt-6">
-        <button
-          type="submit"
-          className="w-full border-2 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition"
-        >
-          Verify Code
-        </button>
-      </div>
-      <div className="text-center mt-4">
-        <p className="text-sm">
-          Back to mobile?{" "}
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
+      <form className="space-y-4 mt-10" onSubmit={handleSubmit}>
+        <div className="space-y-1">
+          <label className="block text-sm">Verification Code</label>
+          <div className="flex justify-center">
+            <OtpInput
+              value={verificationCode}
+              onChange={setVerificationCode}
+              numInputs={6}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  type="text"
+                  inputMode="numeric"
+                  className="max-w-10 h-10 mx-5 text-center text-lg border-b-2 border-black bg-transparent focus:outline-none focus:border-blue-500 transition"
+                />
+              )}
+            />
+          </div>
+        </div>
+        <div className="space-y-4 mt-6">
           <button
-            type="button"
-            className="text-blue-900 font-semibold"
-            onClick={() => setStep('mobile')}
+            type="submit"
+            className="w-full border-2 bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition"
           >
-            Enter Mobile Number
+            Verify Code
           </button>
-        </p>
-      </div>
-    </form>
+        </div>
+        <div className="text-center mt-4">
+          <p className="text-sm">
+            Back to mobile?{" "}
+            <button
+              type="button"
+              className="text-blue-900 font-semibold"
+              onClick={() => setStep("mobile")}
+            >
+              Enter Mobile Number
+            </button>
+          </p>
+        </div>
+      </form>
+    </>
   );
 };
 
-export default VerificationForm
+export default VerificationForm;

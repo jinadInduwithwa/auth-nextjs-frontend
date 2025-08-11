@@ -1,38 +1,9 @@
 import React, { useState, FormEvent } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { FcGoogle, FcCheckmark } from "react-icons/fc";
+import { FcGoogle } from "react-icons/fc";
+import toast, { Toaster } from "react-hot-toast";
 
-type StepType = 'login' | 'resetPassword';
-
-interface WarningModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  message: string;
-}
-
-const WarningModal: React.FC<WarningModalProps> = ({ isOpen, onClose, title, message }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-green-500 text-white p-6 rounded-xl max-w-sm w-full">
-        <div className="flex items-center justify-center mb-4">
-          <FcCheckmark size={32} />
-        </div>
-        <h2 className="text-xl font-bold text-center">{title}</h2>
-        <p className="text-sm text-center mt-2">{message}</p>
-        <button
-          type="button"
-          className="mt-4 w-full bg-white text-black py-2 rounded-lg hover:bg-gray-200 transition"
-          onClick={onClose}
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  );
-};
+type StepType = "login" | "resetPassword";
 
 interface ResetPasswordFormProps {
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
@@ -42,22 +13,77 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ setStep }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = () => {
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // minimum 8 characters, at least one letter and one number
+
+    // Current password validation
+    if (!formData.currentPassword) {
+      toast.error("Current password is required.");
+      return false;
+    }
+    if (!passwordRegex.test(formData.currentPassword)) {
+      toast.error(
+        "Current password must be at least 8 characters long and include at least one letter and one number."
+      );
+      return false;
+    }
+
+    // New password validation
+    if (!formData.newPassword) {
+      toast.error("New password is required.");
+      return false;
+    }
+    if (!passwordRegex.test(formData.newPassword)) {
+      toast.error(
+        "New password must be at least 8 characters long and include at least one letter and one number."
+      );
+      return false;
+    }
+
+    // Confirm password validation
+    if (!formData.confirmPassword) {
+      toast.error("Confirm password is required.");
+      return false;
+    }
+    if (formData.newPassword !== formData.confirmPassword) {
+      toast.error("Confirm password must match the new password.");
+      return false;
+    }
+
+    return true;
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Simulate password reset (replace with actual API call)
-    setShowModal(true);
+    if (validateForm()) {
+      toast.success("Login successful! Redirecting...");
+    }
   };
 
   return (
     <>
+      <Toaster position="top-right" reverseOrder={false} />
       <form className="space-y-4 mt-10" onSubmit={handleSubmit}>
         <div className="space-y-1">
           <label className="block text-sm">Current Password</label>
           <div className="relative">
             <input
               type={showCurrentPassword ? "text" : "password"}
+              name="currentPassword"
+              value={formData.currentPassword}
+              onChange={handleInputChange}
               className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
               required
             />
@@ -80,6 +106,9 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ setStep }) => {
           <div className="relative">
             <input
               type={showNewPassword ? "text" : "password"}
+              name="newPassword"
+              value={formData.newPassword}
+              onChange={handleInputChange}
               className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
               required
             />
@@ -102,6 +131,9 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ setStep }) => {
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
               className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
               required
             />
@@ -141,22 +173,13 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ setStep }) => {
             <button
               type="button"
               className="text-blue-900 font-semibold"
-              onClick={() => setStep('login')}
+              onClick={() => setStep("login")}
             >
               Login
             </button>
           </p>
         </div>
       </form>
-      <WarningModal
-        isOpen={showModal}
-        onClose={() => {
-          setShowModal(false);
-          setStep('login');
-        }}
-        title="Success"
-        message="Password reset successful!"
-      />
     </>
   );
 };

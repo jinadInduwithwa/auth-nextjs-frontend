@@ -1,8 +1,10 @@
+
+
 import React, { useState, FormEvent } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import WarningModal from '../modal/WarningModal';
+import toast, { Toaster } from "react-hot-toast";
 
-type StepType = 'mobile' | 'verification' | 'password' | 'login';
+type StepType = 'mobile' | 'verification' | 'password';
 
 interface PasswordFormProps {
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
@@ -11,36 +13,66 @@ interface PasswordFormProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PasswordForm: React.FC<PasswordFormProps> = ({ setStep, setMobileNumber, setVerificationCode, setShowModal }) => {
+const PasswordForm: React.FC<PasswordFormProps> = ({ setStep, setMobileNumber, setVerificationCode }) => {
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-  const [showModal, setLocalShowModal] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = () => {
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // minimum 8 characters, at least one letter and one number
+
+    if (!formData.newPassword) {
+      toast.error("New password is required.");
+      return false;
+    }
+    if (!passwordRegex.test(formData.newPassword)) {
+      toast.error(
+        "New password must be at least 8 characters long and include at least one letter and one number."
+      );
+      return false;
+    }
+
+    if (!formData.confirmPassword) {
+      toast.error("Confirm password is required.");
+      return false;
+    }
+    if (formData.newPassword !== formData.confirmPassword) {
+      toast.error("Passwords do not match.");
+      return false;
+    }
+
+    return true;
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    setLocalShowModal(true); 
-    setShowModal(true); 
+    if (validateForm()) {
+      //setStep("login");
+    }
   };
 
-  const handleModalClose = () => {
-    setLocalShowModal(false);
-    setShowModal(false);
-    setStep('mobile');
-    setMobileNumber('');
-    setVerificationCode('');
-    setShowNewPassword(false);
-    setShowConfirmPassword(false);
-  };
 
   return (
     <>
+      <Toaster position="top-right" reverseOrder={false} />
       <form className="space-y-4 mt-10" onSubmit={handleSubmit}>
         <div className="space-y-1">
           <label className="block text-sm">New Password</label>
           <div className="relative">
             <input
               type={showNewPassword ? "text" : "password"}
+              name="newPassword"
+              value={formData.newPassword}
+              onChange={handleInputChange}
               className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
               required
             />
@@ -62,6 +94,9 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ setStep, setMobileNumber, s
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
               className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
               required
             />
@@ -93,13 +128,6 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ setStep, setMobileNumber, s
               type="button"
               className="text-blue-900 font-semibold"
               onClick={() => {
-                setStep('mobile');
-                setMobileNumber('');
-                setVerificationCode('');
-                setShowNewPassword(false);
-                setShowConfirmPassword(false);
-                setLocalShowModal(false);
-                setShowModal(false);
               }}
             >
               Login
@@ -107,12 +135,6 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ setStep, setMobileNumber, s
           </p>
         </div>
       </form>
-      <WarningModal
-        isOpen={showModal}
-        onClose={handleModalClose}
-        title="Success"
-        message="Password reset successful!"
-      />
     </>
   );
 };
