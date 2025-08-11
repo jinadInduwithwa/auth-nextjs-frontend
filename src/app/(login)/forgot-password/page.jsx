@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useState } from "react";
-import LeftSection from '../../components/LeftSection';
-import MobileForm from '../../components/forget-password/MobileForm';
-import VerificationForm from '../../components/forget-password/VerificationForm';
-import PasswordForm from '../../components/forget-password/PasswordForm';
+import LeftSection from '../../../components/LeftSection';
+import MobileForm from '../../../components/forget-password/MobileForm';
+import VerificationForm from '../../../components/forget-password/VerificationForm';
+import PasswordForm from '../../../components/forget-password/PasswordForm';
 
 const Page = () => {
   const [step, setStep] = useState('mobile');

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import LeftSection from "../../components/LeftSection";
-import MobileForm from "../../components/signup/MobileForm";
-import VerificationForm from "../../components/signup/VerificationForm";
-import PersonalDetailsForm from "../../components/signup/PersonalDetailsForm";
-import UploadProfilePicture from "../../components/signup/UploadProfilePicture";
+import LeftSection from "../../../components/LeftSection";
+import MobileForm from "../../../components/signup/MobileForm";
+import VerificationForm from "../../../components/signup/VerificationForm";
+import PersonalDetailsForm from "../../../components/signup/PersonalDetailsForm";
+import UploadProfilePicture from "../../../components/signup/UploadProfilePicture";
 
 type StepType = "mobile" | "verification" | "details" | "profilePicture";
 type UserType = {

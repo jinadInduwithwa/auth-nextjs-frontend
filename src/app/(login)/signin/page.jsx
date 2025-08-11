@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useState } from "react";
-import LoginForm from "../../components/signin/LoginForm";
-import ResetPasswordForm from "../../components/signin/ResetPasswordForm";
-import LeftSection from "../../components/LeftSection";
+import LoginForm from "../../../components/signin/LoginForm";
+import ResetPasswordForm from "../../../components/signin/ResetPasswordForm";
+import LeftSection from "../../../components/LeftSection";
 
 
 const Page = () => {
