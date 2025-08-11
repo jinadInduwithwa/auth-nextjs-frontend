@@ -1,9 +1,10 @@
 "use client";
 
-import React, { FormEvent } from "react";
+import React, { FormEvent, useTransition } from "react";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import { verifyPhoneSend } from "../../actions/customerActions";
 
 type StepType = "mobile" | "verification" | "details" | "profilePicture";
 
@@ -14,6 +15,8 @@ interface MobileFormProps {
 }
 
 const MobileForm: React.FC<MobileFormProps> = ({ mobileNumber, setMobileNumber, setStep }) => {
+  const [isPending, startTransition] = useTransition();
+
   const validateForm = () => {
     const mobileRegex = /^[0-9]{10}$/;
     if (!mobileNumber) {
@@ -29,10 +32,19 @@ const MobileForm: React.FC<MobileFormProps> = ({ mobileNumber, setMobileNumber, 
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm()) {
-      toast.success("Verification code sent!");
-      setStep("verification");
-    }
+    if (!validateForm()) return;
+
+    startTransition(async () => {
+      const result = await verifyPhoneSend(mobileNumber);
+      if ('error' in result) {
+        toast.error(result.error);
+      } else if (result.isSuccessful) {
+        toast.success("Verification code sent!");
+        setStep("verification");
+      } else {
+        toast.error(result.message || "Failed to send code.");
+      }
+    });
   };
 
   return (

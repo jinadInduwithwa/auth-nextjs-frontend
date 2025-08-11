@@ -3,14 +3,10 @@
 import React, { FormEvent } from "react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import { UserType } from "../../types/user.type"; 
 
 type StepType = "mobile" | "verification" | "details" | "profilePicture";
-type UserType = {
-  firstName: string;
-  lastName: string;
-  dob: string;
-  gender: string;
-};
+
 
 interface PersonalDetailsFormProps {
   user: UserType;
@@ -28,7 +24,7 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ user, setUser
       toast.error("Last name is required.");
       return false;
     }
-    if (!user.dob) {
+    if (!user.dateOfBirth) {
       toast.error("Date of birth is required.");
       return false;
     }
@@ -77,8 +73,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ user, setUser
           <label className="block text-sm">Date of Birth</label>
           <input
             type="date"
-            value={user.dob}
-            onChange={(e) => setUser({ ...user, dob: e.target.value })}
+            value={user.dateOfBirth}
+            onChange={(e) => setUser({ ...user, dateOfBirth: e.target.value })}
             className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
             required
           />

@@ -9,7 +9,7 @@ export async function apiFetch<T>(
   body: object | FormData | null = null,
   headers: Record<string, string> = {}
 ): Promise<ApiResponse<T>> {
-  const baseUrl = process.env.API_BASE_URL;
+  const baseUrl = "https://fit360apidev.document.lk";
   if (!baseUrl) throw new Error('API_BASE_URL not defined');
 
   const url = `${baseUrl}${endpoint}`;

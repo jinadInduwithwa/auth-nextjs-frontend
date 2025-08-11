@@ -1,9 +1,11 @@
 "use client";
 
-import React, { FormEvent } from "react";
+import React, { FormEvent, useTransition } from "react";
 import OtpInput from "react-otp-input";
 import toast, { Toaster } from "react-hot-toast";
 import Link from "next/link";
+import { verifyPhoneConfirm } from "../../actions/customerActions"; // Adjust path
+import { UserType } from "../../types/user.type";
 
 type StepType = "mobile" | "verification" | "details" | "profilePicture";
 
@@ -11,13 +13,19 @@ interface VerificationFormProps {
   verificationCode: string;
   setVerificationCode: React.Dispatch<React.SetStateAction<string>>;
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
+  mobileNumber: string; // Added
+  setUser: React.Dispatch<React.SetStateAction<UserType>>; // Added
 }
 
 const VerificationForm: React.FC<VerificationFormProps> = ({
   verificationCode,
   setVerificationCode,
   setStep,
+  mobileNumber,
+  setUser,
 }) => {
+  const [isPending, startTransition] = useTransition();
+
   const validateForm = () => {
     const codeRegex = /^[0-9]{6}$/;
     if (!verificationCode) {
@@ -33,10 +41,20 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm()) {
-      toast.success("Code verified successfully!");
-      setStep("details");
-    }
+    if (!validateForm()) return;
+
+    startTransition(async () => {
+      const result = await verifyPhoneConfirm(mobileNumber, verificationCode);
+      if ('error' in result) {
+        toast.error(result.error);
+      } else if (result.isSuccessful) {
+        toast.success("Code verified successfully!");
+        setUser((prev) => ({ ...prev, contactNumber: mobileNumber }));
+        setStep("details");
+      } else {
+        toast.error(result.message || "Failed to verify code.");
+      }
+    });
   };
 
   return (

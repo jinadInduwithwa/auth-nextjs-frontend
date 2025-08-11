@@ -6,31 +6,23 @@ import MobileForm from "../../../components/signup/MobileForm";
 import VerificationForm from "../../../components/signup/VerificationForm";
 import PersonalDetailsForm from "../../../components/signup/PersonalDetailsForm";
 import UploadProfilePicture from "../../../components/signup/UploadProfilePicture";
+import { UserType } from "../../../types/user.type";
 
 type StepType = "mobile" | "verification" | "details" | "profilePicture";
-type UserType = {
-  firstName: string;
-  lastName: string;
-  dob: string;
-  gender: string;
-};
+
 const Page = () => {
   const [step, setStep] = useState<StepType>("mobile");
   const [mobileNumber, setMobileNumber] = useState<string>("");
   const [verificationCode, setVerificationCode] = useState<string>("");
-   const [user, setUser] = useState<UserType>({
+  const [user, setUser] = useState<UserType>({
+    contactNumber: "",
+    dateOfBirth: "",
     firstName: "",
-    lastName: "",
-    dob: "",
     gender: "",
+    lastName: "",
+    image: "", // Base64 cropped
+    fullSizeImage: "", // Base64 original
   });
-
-  // Debugging to catch number error
-  console.log("Page step:", step, typeof step);
-  if (typeof step !== "string") {
-    console.error("Invalid step type:", step);
-    setStep("mobile"); // Reset to default
-  }
 
   return (
     <div className="flex flex-col lg:flex-row w-full min-h-screen">
@@ -64,14 +56,21 @@ const Page = () => {
               verificationCode={verificationCode}
               setVerificationCode={setVerificationCode}
               setStep={setStep}
+              mobileNumber={mobileNumber} // Pass for verification
+              setUser={setUser} // To set contactNumber after success
             />
           ) : step === "details" ? (
             <PersonalDetailsForm 
-            user={user}
-            setUser={setUser}
-            setStep={setStep} />
+              user={user}
+              setUser={setUser}
+              setStep={setStep}
+            />
           ) : step === "profilePicture" ? (
-            <UploadProfilePicture setStep={setStep} />
+            <UploadProfilePicture 
+              setStep={setStep}
+              user={user}
+              setUser={setUser}
+            />
           ) : null}
         </div>
       </div>
