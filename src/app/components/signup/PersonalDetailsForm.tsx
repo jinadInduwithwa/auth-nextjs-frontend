@@ -1,35 +1,38 @@
 "use client";
 
-import React, { useState, FormEvent } from "react";
+import React, { FormEvent } from "react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 
 type StepType = "mobile" | "verification" | "details" | "profilePicture";
+type UserType = {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  gender: string;
+};
 
 interface PersonalDetailsFormProps {
+  user: UserType;
+  setUser: React.Dispatch<React.SetStateAction<UserType>>;
   setStep: React.Dispatch<React.SetStateAction<StepType>>;
 }
 
-const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ setStep }) => {
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [dob, setDob] = useState<string>("");
-  const [gender, setGender] = useState<string>("");
-
+const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ user, setUser, setStep }) => {
   const validateForm = () => {
-    if (!firstName) {
+    if (!user.firstName) {
       toast.error("First name is required.");
       return false;
     }
-    if (!lastName) {
+    if (!user.lastName) {
       toast.error("Last name is required.");
       return false;
     }
-    if (!dob) {
+    if (!user.dob) {
       toast.error("Date of birth is required.");
       return false;
     }
-    if (!gender) {
+    if (!user.gender) {
       toast.error("Gender is required.");
       return false;
     }
@@ -53,8 +56,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ setStep }) =>
             <label className="block text-sm">First Name</label>
             <input
               type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              value={user.firstName}
+              onChange={(e) => setUser({ ...user, firstName: e.target.value })}
               className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
               required
             />
@@ -63,8 +66,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ setStep }) =>
             <label className="block text-sm">Last Name</label>
             <input
               type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              value={user.lastName}
+              onChange={(e) => setUser({ ...user, lastName: e.target.value })}
               className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
               required
             />
@@ -74,8 +77,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ setStep }) =>
           <label className="block text-sm">Date of Birth</label>
           <input
             type="date"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
+            value={user.dob}
+            onChange={(e) => setUser({ ...user, dob: e.target.value })}
             className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
             required
           />
@@ -83,8 +86,8 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ setStep }) =>
         <div className="space-y-1">
           <label className="block text-sm">Gender</label>
           <select
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
+            value={user.gender}
+            onChange={(e) => setUser({ ...user, gender: e.target.value })}
             className="w-full px-0 py-3 border-b border-black bg-transparent focus:outline-none"
             required
           >

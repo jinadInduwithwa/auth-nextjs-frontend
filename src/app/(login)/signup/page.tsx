@@ -8,10 +8,22 @@ import PersonalDetailsForm from "../../components/signup/PersonalDetailsForm";
 import UploadProfilePicture from "../../components/signup/UploadProfilePicture";
 
 type StepType = "mobile" | "verification" | "details" | "profilePicture";
+type UserType = {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  gender: string;
+};
 const Page = () => {
   const [step, setStep] = useState<StepType>("mobile");
   const [mobileNumber, setMobileNumber] = useState<string>("");
   const [verificationCode, setVerificationCode] = useState<string>("");
+   const [user, setUser] = useState<UserType>({
+    firstName: "",
+    lastName: "",
+    dob: "",
+    gender: "",
+  });
 
   // Debugging to catch number error
   console.log("Page step:", step, typeof step);
@@ -54,7 +66,10 @@ const Page = () => {
               setStep={setStep}
             />
           ) : step === "details" ? (
-            <PersonalDetailsForm setStep={setStep} />
+            <PersonalDetailsForm 
+            user={user}
+            setUser={setUser}
+            setStep={setStep} />
           ) : step === "profilePicture" ? (
             <UploadProfilePicture setStep={setStep} />
           ) : null}

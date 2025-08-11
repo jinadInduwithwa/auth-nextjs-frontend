@@ -58,13 +58,6 @@ const MobileForm: React.FC<MobileFormProps> = ({ mobileNumber, setMobileNumber, 
           >
             Send Verification Code
           </button>
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-2 border-2 border-gray-500 text-gray-500 font-semibold py-3 rounded-xl hover:bg-gray-100 transition"
-          >
-            <FcGoogle size={22} />
-            Signup with Google
-          </button>
         </div>
         <div className="text-center mt-4">
           <p className="text-sm">

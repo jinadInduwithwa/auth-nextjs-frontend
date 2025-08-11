@@ -45,7 +45,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({
       <form className="space-y-4 mt-10" onSubmit={handleSubmit}>
         <div className="space-y-1">
           <label className="block text-sm">Enter the Verification Code</label>
-          <div className="flex justify-between">
+          <div className="flex justify-center">
             <OtpInput
               value={verificationCode}
               onChange={setVerificationCode}

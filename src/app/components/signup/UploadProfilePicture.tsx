@@ -78,7 +78,6 @@ const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({ setStep }) 
     const croppedImage = await getCroppedImage();
     if (croppedImage) {
       toast.success("Profile picture uploaded successfully!");
-      // Simulate uploading cropped image (replace with API call)
       console.log("Cropped image:", croppedImage);
       setStep("mobile");
     }
