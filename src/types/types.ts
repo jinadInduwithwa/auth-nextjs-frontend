@@ -113,8 +113,8 @@ export interface RegisterRequest {
   firstName: string;
   gender: string;
   lastName: string;
-  image: string;
-  fullSizeImage: string;
+  image: string | null;
+  fullSizeImage: string | null;
 }
 
 // Password change/reset requests

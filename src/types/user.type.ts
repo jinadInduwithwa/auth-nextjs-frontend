@@ -1,9 +1,9 @@
-export type UserType = {
+export interface UserType {
   contactNumber: string;
   dateOfBirth: string;
   firstName: string;
   gender: string;
   lastName: string;
-  image: string | "N/A";
-  fullSizeImage: string | "N/A";
-};
+  image: string | null;
+  fullSizeImage: string | null;
+}

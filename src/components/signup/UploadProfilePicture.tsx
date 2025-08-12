@@ -93,35 +93,44 @@ export default function UploadProfilePicture({
     startTransition(async () => {
       try {
         const croppedImage = await getCroppedImage();
-        if (croppedImage && originalFile) {
-          const imageResult = await saveImages(originalFile, croppedImage);
+        if (!croppedImage || !originalFile) {
+          toast.error("Failed to process image.");
+          return;
+        }
 
-          if ("error" in imageResult) {
-            toast.error(imageResult.error || "Failed to save images.");
-            return;
-          }
+        const imageResult = await saveImages(originalFile, croppedImage);
+        if ("error" in imageResult) {
+          console.error("SaveImages Error:", imageResult.error);
+          toast.error(imageResult.error || "Failed to save images.");
+          return;
+        }
 
-          const updatedUser: UserType = {
-            ...user,
-            image: imageResult.image || "",
-            fullSizeImage: imageResult.fullSizeImage || "",
-          };
-          setUser(updatedUser);
+        const updatedUser: UserType = {
+          ...user,
+          image: imageResult.image,
+          fullSizeImage: imageResult.fullSizeImage,
+        };
+        setUser(updatedUser);
 
-          const result = await registerUser(updatedUser);
+        console.log("Sending to registerUser:", updatedUser); // Debug
 
-          if ("error" in result) {
-            toast.error(result.error || "Registration failed.");
-          } else if (result.isSuccessful) {
-            toast.success(result.message || "Registration successful!");
-          } else {
-            toast.error(result.message || "Registration failed.");
-          }
+        const result = await registerUser(updatedUser);
+        if ("error" in result) {
+          console.error("Register Error:", result.error);
+          toast.error(result.error || "Registration failed.");
+        } else if (result.isSuccessful) {
+          toast.success(result.message || "Registration successful!");
+        } else {
+          console.error("Register Failed:", result.message);
+          toast.error(result.message || "Registration failed.");
         }
       } catch (err: any) {
-        if (err?.digest === "NEXT_REDIRECT") return;
-        console.error("Register Error:", err);
-        toast.error("Registration failed.");
+        if (err?.digest === "NEXT_REDIRECT") {
+          console.log("Redirecting to /dashboard"); // Debug
+          return; // Suppress NEXT_REDIRECT error
+        }
+        console.error("Unexpected Error:", err);
+        toast.error("An unexpected error occurred during registration.");
       }
     });
   };
@@ -131,24 +140,30 @@ export default function UploadProfilePicture({
       try {
         const updatedUser: UserType = {
           ...user,
-          image: "",
-          fullSizeImage: "",
+          image: null,
+          fullSizeImage: null,
         };
         setUser(updatedUser);
 
-        const result = await registerUser(updatedUser);
+        console.log("Sending to registerUser (skip):", updatedUser); // Debug
 
+        const result = await registerUser(updatedUser);
         if ("error" in result) {
+          console.error("Register Error:", result.error);
           toast.error(result.error || "Registration failed.");
         } else if (result.isSuccessful) {
           toast.success(result.message || "Registration successful (skipped image)!");
         } else {
+          console.error("Register Failed:", result.message);
           toast.error(result.message || "Registration failed.");
         }
       } catch (err: any) {
-        if (err?.digest === "NEXT_REDIRECT") return;
-        console.error("Register Error:", err);
-        toast.error("Registration failed.");
+        if (err?.digest === "NEXT_REDIRECT") {
+          console.log("Redirecting to /dashboard"); // Debug
+          return; // Suppress NEXT_REDIRECT error
+        }
+        console.error("Unexpected Error:", err);
+        toast.error("An unexpected error occurred during registration.");
       }
     });
   };

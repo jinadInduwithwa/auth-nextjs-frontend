@@ -1,7 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { ApiResponse } from './types';
+import { ApiResponse } from '../types/types';
 
 export async function apiFetch<T>(
   endpoint: string,
@@ -18,7 +18,7 @@ export async function apiFetch<T>(
   const defaultHeaders: Record<string, string> = {
     Accept: 'text/plain',
     ...(body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}), // Adjust if API uses custom header
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...headers,
   };
 
